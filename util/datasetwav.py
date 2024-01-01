@@ -31,9 +31,7 @@ class RegressionDataset(Dataset):
         grouped = itertools.groupby(sorted(files), lambda x: "_-_".join(os.path.basename(x).split("_-_")[:3]))
         for recording_name, feature_paths in grouped:
             new_files += [sorted(feature_paths, key=lambda x: "0" if x == "eeg" else x)]
-         
-            
-        
+    
         return new_files
 
     def __len__(self):
@@ -63,7 +61,7 @@ class RegressionDataset(Dataset):
             if idx == 0: 
                 start_idx= randint(0,len(data)- self.input_length)
              
-            if idx == 3:
+            if idx == 3:  #wav file
                 framed_data += [data[start_idx*250:start_idx*250 + 250*self.input_length]]
             else:
                 framed_data += [data[start_idx:start_idx + self.input_length]]
@@ -91,7 +89,7 @@ class RegressionDataset(Dataset):
         for idx, feature in enumerate(self.files[recording_index]):
             data = np.load(feature)
             
-            if idx == 3:
+            if idx == 3:  #wav file
                 nsegment = data.shape[0] // (self.input_length * 250)
                 data = data[:int(nsegment * self.input_length*250)]
                 segment_data = [torch.FloatTensor(data[i:i+self.input_length*250]).unsqueeze(0) for i in range(0, data.shape[0], self.input_length*250)]
